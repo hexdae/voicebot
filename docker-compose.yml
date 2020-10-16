@@ -4,6 +4,9 @@ services:
   bot:
     build:
       context: .
+    volumes:
+      - ".:/app"
     ports:
       - '5000:5000'
-    command: ["source", "chatbot-venv/bin/activate", "&&", "python", "bot.py"]
+    command: ["bash"]
+    # command: ["bash", "-c", "source chatbot-venv/bin/activate && python bot.py"]

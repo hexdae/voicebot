@@ -1,0 +1,3 @@
+[console_scripts]
+instabot-py = instabot_py.__main__:main
+

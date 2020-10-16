@@ -1,0 +1,3 @@
+[console_scripts]
+config42 = config42.__main__:main
+
