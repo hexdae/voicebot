@@ -6,7 +6,7 @@ import audio
 import requests
 
 app = Flask(__name__)
-SERVER = "https://d1c13269596b.ngrok.io"
+SERVER = "http://9a925d77961e.ngrok.io"
 
 
 @app.route("/files/<path:path>", methods=["GET"])
