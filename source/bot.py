@@ -37,7 +37,11 @@ def bot():
             addr = req.get('MediaUrl0', '')
             sender = req.get('To', '')
             recipient = req.get('From', '')
-            file = audio.from_url(requests.get(addr).url, media_content, media_format)
+
+            sound = audio.from_url(requests.get(addr).url, media_format)
+            file = f"files/{sender}/{hash(sound)}.mp3"
+            audio.save(audio.speed_change(sound, 1.5), file)
+
             send_mms(sender, recipient, SERVER + "/" + file)
             msg.body("Here is your sped up message")
             responded = True

@@ -3,6 +3,13 @@ import urllib.request
 import os
 import io
 
+
+def from_url(url, fmt):
+    with urllib.request.urlopen(url) as audio_stream:
+        audio = io.BytesIO(audio_stream.read())
+        return AudioSegment.from_file(audio, format=fmt)
+
+
 def speed_change(sound, speed=1.0):
     # Manually override the frame_rate. This tells the computer how many
     # samples to play per second
@@ -15,18 +22,16 @@ def speed_change(sound, speed=1.0):
     return sound_with_altered_frame_rate.set_frame_rate(sound.frame_rate)
 
 
-def from_url(url, content, fmt):
-    file_out = "files/" + content + "." + 'mp3'
-    if os.path.exists(file_out):
-        os.remove(file_out)
-    with urllib.request.urlopen(url) as audio_stream:
-        audio = io.BytesIO(audio_stream.read())
-        sound = AudioSegment.from_file(audio, format=fmt)
-        speed_change(sound, 1.5).export(file_out, format="mp3")
-    return file_out
+def save(sound, path):
+    directory = os.path.dirname(path)
+    print(directory)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    if os.path.exists(path):
+        os.remove(path)
+    fmt = path.split('.')[-1]
+    sound.export(path, fmt)
 
-if __name__=="__main__":
-    from_url("http://42f3bb7713e8.ngrok.io/files/audio.amr", "audio", "amr")
 
 
 
