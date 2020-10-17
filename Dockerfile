@@ -11,6 +11,5 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Run the application:
-COPY bot.py .
 COPY source .
 CMD ["python", "source/bot.py"]
