@@ -24,7 +24,6 @@ def speed_change(sound, speed=1.0):
 
 def save(sound, path):
     directory = os.path.dirname(path)
-    print(directory)
     if not os.path.exists(directory):
         os.makedirs(directory)
     if os.path.exists(path):
