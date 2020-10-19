@@ -14,7 +14,7 @@ in the repo root directory with the following contents:
 TWILIO_SID="<YOUR TWILIO SID>"
 TWILIO_TOKEN="<YOUR TWILIO TOKEN>"
 SERVER_IP="<YOUR IP ADDRESS>"
-SERVER_PORT="<YOUR PORT>"
+SERVER_PORT="8080"
 ```
 
 ### Deployment
