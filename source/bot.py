@@ -1,24 +1,34 @@
 from flask import Flask, send_file
 from flask import request
+from io import BytesIO
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
 import audio
 import requests
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
+
+dotenv_path = join(dirname(__file__) + "/../", '.env')
+load_dotenv(dotenv_path)
+
+TWILIO_SID = os.environ.get("TWILIO_SID")
+TWILIO_TOKEN = os.environ.get("TWILIO_TOKEN")
+SERVER_IP = os.environ.get("SERVER_IP")
+SERVER_PORT = os.environ.get("SERVER_PORT")
 
 app = Flask(__name__)
-SERVER = "http://42f3bb7713e8.ngrok.io"
+files = {}
 
 
 @app.route("/files/<path:path>", methods=["GET"])
 def get_file(path):
     """Download a file."""
-    file_dir = "/home/pi/Sandbox/Twilio/chatbot/"
-    return send_file(f"{file_dir}/files/{path}", mimetype="audio/amr")
+    return send_file(files.pop(path), mimetype="audio/amr")
 
 
 @app.route('/bot', methods=['POST'])
 def bot():
-    # add webhook logic here and return a response
     req = request.values
 
     num_media = int(req.get('NumMedia', ''))
@@ -39,10 +49,12 @@ def bot():
             recipient = req.get('From', '')
 
             sound = audio.from_url(requests.get(addr).url, media_format)
-            file = f"files/{sender}/{hash(sound)}.mp3"
-            audio.save(audio.speed_change(sound, 1.5), file)
+            path = f"{recipient}/{hash(sound)}.mp3"
+            files[path] = BytesIO()
+            audio.speed_change(sound, 1.5).export(files[path])
 
-            send_mms(sender, recipient, SERVER + "/" + file)
+            url = f"http://{SERVER_IP}:{SERVER_PORT}/files/{path})"
+            send_mms(sender, recipient, url)
             msg.body("Here is your sped up message")
             responded = True
 
@@ -52,17 +64,15 @@ def bot():
     return str(resp)
 
 
-def send_mms(sender, recipient, url):
-    account_sid = 'AC7cf95694a62b120b52a37adf5c564807'
-    auth_token = '26fa3beb80851e7182aa2f99c3c27a87'
-    client = Client(account_sid, auth_token)
+def send_mms(sender, recipient, media_url):
+    client = Client(TWILIO_SID, TWILIO_TOKEN)
     return client.messages.create(
         body='',
         from_=sender,
         to=recipient,
-        media_url=[url]
+        media_url=[media_url]
     )
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host=('0.0.0.0'), port=SERVER_PORT)
