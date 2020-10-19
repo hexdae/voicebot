@@ -11,6 +11,11 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 RUN mkdir -p files
 
-# Run the application:
+# Copy the application
 COPY source source
+
+# Expose the port
+EXPOSE 8080
+
+# RUn the application
 CMD ["python", "source/bot.py"]

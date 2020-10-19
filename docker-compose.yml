@@ -2,9 +2,7 @@ version: '3.7'
 
 services:
   bot:
-    build:
-      context: .
-      network: host
+    build: .
     ports:
-      - '5000:5000'
-    command: ["python", "source/bot.py"]
+      - '8080:8080'
+    restart: always
