@@ -53,7 +53,7 @@ def bot():
             files[path] = BytesIO()
             audio.speed_change(sound, 1.5).export(files[path])
 
-            url = f"http://{SERVER_IP}:{SERVER_PORT}/files/{path})"
+            url = f"http://{SERVER_IP}:{SERVER_PORT}/files/{path}"
             send_mms(sender, recipient, url)
             msg.body("Here is your sped up message")
             responded = True
