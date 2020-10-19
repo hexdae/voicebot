@@ -58,8 +58,8 @@ def bot():
             msg.body("Here is your sped up message")
             responded = True
 
-    if responded != True:
-        msg.body("I can't reply to this type of message, sorry")
+    if not responded:
+        msg.body("I can't reply to this type of message, sorry!")
 
     return str(resp)
 
