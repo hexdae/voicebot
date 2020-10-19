@@ -12,6 +12,7 @@ RUN pip install -r requirements.txt
 RUN mkdir -p files
 
 # Copy the application
+COPY .env .
 COPY source source
 
 # Expose the port
