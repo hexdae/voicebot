@@ -9,7 +9,6 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 # Install dependencies:
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-RUN mkdir -p files
 
 # Expose the port
 EXPOSE 8080
