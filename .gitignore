@@ -1,4 +1,13 @@
+# Python files.
 */__pycache__/*
 *venv/*
-.env
+
+# IDE files.
 .idea
+
+# Environment file.
+.env
+
+# Development directories.
+input
+output
