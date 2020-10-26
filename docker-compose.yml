@@ -8,9 +8,13 @@ services:
     restart: always
   test:
     build: .
+    environment:
+      - FLASK_APP=source/bot.py
+      - FLASK_ENV=development
     ports:
       - '8080:8080'
     volumes:
        - .:/app
+    command: bash -c "flask run -p 8080 -h 0.0.0.0"
 
 
