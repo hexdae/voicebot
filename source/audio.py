@@ -29,14 +29,14 @@ def stretch(snd_array, factor, window_size, h):
         s2 = np.fft.fft(hanning_window * a2)
 
         # Rephase all frequencies and compute the inverse fft
-        phase = (phase + np.angle(s2 / (s1 + 0.0001))) % (2 * np.pi)
+        phase = (phase + np.angle(s2 / (s1 + 0.00001))) % (2 * np.pi)
         a2_rephased = np.fft.ifft(np.abs(s2) * np.exp(1j * phase))
 
         i2 = int(i / factor)
         result[i2: i2 + window_size] += hanning_window * a2_rephased.real
 
     # normalize (16bit)
-    result = ((2**(16-4)) * result/result.max())
+    result = ((2**(16-3)) * result / result.max())
 
     return result.astype('int16')
 
@@ -56,10 +56,3 @@ def save(sound, path):
         os.remove(path)
     fmt = path.split('.')[-1]
     sound.export(path, fmt)
-
-
-if __name__ == "__main__":
-    from pydub.playback import play
-    sound = AudioSegment.from_file("example.m4a", "m4a")
-    sound = speed_change(sound, 1.5)
-    save(sound, "./test.mp3")
