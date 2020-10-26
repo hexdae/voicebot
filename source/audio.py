@@ -41,12 +41,23 @@ def stretch(snd_array, factor, window_size, h):
     return result.astype(np.int16)
 
 
-def speed_change(sound, speed=1.0):
+def phase_vocoder(sound, speed=1.0):
     """ Modify the speed of an AudioSegment without changing the pitch """
-    original_frame_rate = sound.frame_rate
     samples = np.array(sound.get_array_of_samples(), dtype = np.int16)
-    faster = sound._spawn(stretch(samples, speed, 2**10, 2**8))
-    return faster.set_frame_rate(original_frame_rate)
+    modified_samples = stretch(samples, speed, 2**10, 2**6)
+    faster = sound._spawn(modified_samples)
+    return faster
+
+
+def speed_change(sound, speed=1.0):
+    """ Modify the speed of an AudioSegment """
+    sound_with_altered_frame_rate = sound._spawn(sound.raw_data, overrides={
+        "frame_rate": int(sound.frame_rate * speed)
+    })
+    # convert the sound with altered frame rate to a standard frame rate
+    # so that regular playback programs will work right. They often only
+    # know how to play audio at standard frame rate (like 44.1k)
+    return sound_with_altered_frame_rate.set_frame_rate(sound.frame_rate)
 
 
 def save(sound, path):

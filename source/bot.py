@@ -21,10 +21,12 @@ app = Flask(__name__)
 files = {}
 
 
-@app.route("/files/<path:path>", methods=["GET"])
-def get_file(path):
+@app.route("/files/audio/<path:path>", methods=["GET"])
+def get_audio_file(path):
     """Download a file."""
-    return send_file(files.pop(path), mimetype="audio/amr")
+    _, extension = os.path.splitext(path)
+    print(extension)
+    return send_file(files.pop(path), mimetype=f"audio/mp4")
 
 
 @app.route('/bot', methods=['POST'])
@@ -34,8 +36,7 @@ def bot():
     num_media = int(req.get('NumMedia', ''))
     incoming_msg = req.get('Body', '')
 
-    resp = MessagingResponse()
-    msg = resp.message()
+    response = MessagingResponse()
     responded = False
 
     if num_media > 0:
@@ -47,21 +48,22 @@ def bot():
             addr = req.get('MediaUrl0', '')
             sender = req.get('To', '')
             recipient = req.get('From', '')
-
             sound = audio.from_url(requests.get(addr).url, media_format)
-            path = f"{recipient}/{hash(sound)}.mp3"
-            files[path] = BytesIO()
-            audio.speed_change(sound, 1.5).export(files[path])
 
-            url = f"http://{SERVER_IP}:{SERVER_PORT}/files/{path}"
-            send_mms(sender, recipient, url)
-            msg.body("Here is your sped up message")
+            sound_format = "mp4"
+            path = f"{recipient}/{hash(sound)}.{sound_format}"
+            files[path] = BytesIO()
+            sound = audio.speed_change(sound, 1.5)
+            sound.export(files[path], sound_format)
+
+            msg = response.message("Here is your sped up message")
+            msg.media(f"http://{SERVER_IP}:{SERVER_PORT}/files/audio/{path}")
             responded = True
 
     if not responded:
-        msg.body("I can't reply to this type of message, sorry!")
+        msg = response.message("Sorry, I cannot respond to this type of message")
 
-    return str(resp)
+    return str(response)
 
 
 def send_mms(sender, recipient, media_url):
