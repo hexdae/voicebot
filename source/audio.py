@@ -38,15 +38,15 @@ def stretch(snd_array, factor, window_size, h):
 
     # normalize (16bit)
     result = ((2**(16-3)) * result / result.max())
-
-    return result.astype('int16')
+    return result.astype(np.int16)
 
 
 def speed_change(sound, speed=1.0):
     """ Modify the speed of an AudioSegment without changing the pitch """
-    raw = np.array(sound.get_array_of_samples(), dtype = np.int16)
-    stretched = stretch(raw, speed, 2**10, 2**8)
-    return sound._spawn(stretched)
+    original_frame_rate = sound.frame_rate
+    samples = np.array(sound.get_array_of_samples(), dtype = np.int16)
+    faster = sound._spawn(stretch(samples, speed, 2**10, 2**8))
+    return faster.set_frame_rate(original_frame_rate)
 
 
 def save(sound, path):
