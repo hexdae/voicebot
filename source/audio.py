@@ -29,7 +29,8 @@ def stretch(snd_array, factor, window_size, h):
         s2 = np.fft.fft(hanning_window * a2)
 
         # Rephase all frequencies and compute the inverse fft
-        phase = (phase + np.angle(s2 / (s1 + 0.00001))) % (2 * np.pi)
+        s1[s1 == 0] = 1e-12;
+        phase = (phase + np.angle(s2 / s1)) % (2 * np.pi)
         a2_rephased = np.fft.ifft(np.abs(s2) * np.exp(1j * phase))
 
         i2 = int(i / factor)
