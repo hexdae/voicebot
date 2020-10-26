@@ -1,8 +1,16 @@
 version: '3.7'
 
 services:
-  bot:
+  chatbot:
     build: .
     ports:
       - '8080:8080'
     restart: always
+  test:
+    build: .
+    links:
+      - chatbot
+    volumes:
+       - .:/app
+
+
